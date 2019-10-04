@@ -1,20 +1,29 @@
 const
+   navigation = document.querySelector('nav'),
    article1 = document.querySelector('.article1'),
-   article2 = document.querySelector('.article2'),
-   progressBar = document.querySelector('.progress-bar');
+   article2 = document.querySelector('.article2');
 
-const setProgressBar = (progressBar, content) => {
-   const contentHeight = content.clientHeight;
-   const contentTop = content.offsetTop;
-   // const maxValue = contentHeight - window.innerHeight + 60; //if navbar is fixed (60 - offset - navheight), but first article have to got 60px
-   const maxValue = contentHeight - window.innerHeight; //if navbar position is static 
+const createProgressBar = (content) => {
+   const progress = document.createElement('progress');
+   progress.classList.add(`progress-bar`);
+   progress.setAttribute("value", 0);
+   content.insertBefore(progress, content.firstChild)
+   return progress;
+}
+
+const setProgressMax = (progressBar, content, offset) => {
+   const maxValue = content.clientHeight - window.innerHeight + 60; //if navbar is fixed (60 - offset - navheight), but first article has to got 60px
+   // const maxValue = content.clientHeight - window.innerHeight; //if navbar position is static 
    progressBar.setAttribute("max", maxValue);
 }
 
-const calculateProgress = (progressBar, content) => {
-   const contentTop = content.offsetTop;
-   // progressBar.setAttribute("value", window.scrollY - contentTop + 60); //if navbar is fixed (60 - offset - navheight), but first article have to got 60px margin top
-   progressBar.setAttribute("value", window.scrollY - contentTop); //if navbar position is static
+const calculateProgress = (progressBar, content, nav) => {
+   progressBar.setAttribute("value", window.scrollY - content.offsetTop);
+   if (progressBar.value <= 0) {
+      if (window.getComputedStyle(nav).getPropertyValue("position") === "static") progressBar.style.position = "absolute"
+      else if (window.getComputedStyle(nav).getPropertyValue("position") === "fixed") progressBar.style.position = "fixed"
+   }
+   else if (progressBar.value > 0 && progressBar.value <= progressBar.max) progressBar.style.position = "fixed";
 }
 
 //Throttle - limit the amount of times a function is invoked (mousemove, touchmove, scroll, click(anti-spam button) )
@@ -42,9 +51,10 @@ const debounce = (callback, delay) => {
    }
 }
 
-setProgressBar(progressBar, article2)
-window.addEventListener('scroll', throttle(() => calculateProgress(progressBar, article2), 100));
-window.addEventListener('scroll', debounce(() => calculateProgress(progressBar, article2), 100));
+const progressBar = createProgressBar(article2);
+setProgressMax(progressBar, article1)
+window.addEventListener('scroll', throttle(() => calculateProgress(progressBar, article1, navigation), 50));
+window.addEventListener('scroll', debounce(() => calculateProgress(progressBar, article1, navigation), 50));
 
 
 
