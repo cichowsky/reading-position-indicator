@@ -26,10 +26,12 @@ progress::-webkit-progress-bar {
 
 progress::-webkit-progress-value {
    background-color: green;
+   transition: 0.3s width linear;
 }
 
 progress::-moz-progress-bar {
    background-color: green;
+   transition: 0.3s width linear;
 }
 
 

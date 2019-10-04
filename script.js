@@ -17,10 +17,22 @@ const calculateProgress = (progressBar, content) => {
    progressBar.setAttribute("value", window.scrollY - contentTop); //if navbar position is static
 }
 
-
+//Throttle - limit the amount of times a function is invoked (mousemove, touchmove, scroll, click(anti-spam button) )
+const throttle = (callback, limit) => {
+   let inThrottle = false;
+   return function() {
+      const context = this;
+      const args = arguments;
+      if (!inThrottle) {
+         callback.apply(context, args);
+         inThrottle = true;
+         setTimeout(() => inThrottle = false, limit);
+      }
+   }
+}
 
 setProgressBar(progressBar, article2)
-window.addEventListener('scroll', () => calculateProgress(progressBar, article2));
+window.addEventListener('scroll', throttle(() => calculateProgress(progressBar, article2), 100));
 
 
 
