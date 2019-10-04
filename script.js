@@ -31,8 +31,20 @@ const throttle = (callback, limit) => {
    }
 }
 
+//Debounce - invokes a function once after delay (scroll, resize)
+const debounce = (callback, delay) => {
+   let inDebounce
+   return function() {
+      const context = this;
+      const args = arguments;
+      clearTimeout(inDebounce);
+      inDebounce = setTimeout(() => callback.apply(context, args), delay)
+   }
+}
+
 setProgressBar(progressBar, article2)
 window.addEventListener('scroll', throttle(() => calculateProgress(progressBar, article2), 100));
+window.addEventListener('scroll', debounce(() => calculateProgress(progressBar, article2), 100));
 
 
 
