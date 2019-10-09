@@ -65,31 +65,52 @@ const
 
 
 class ReadingIndicator {
-   constructor(content, offset = null) {
+   constructor(content, behaviour = "sticky") {
       this.content = content;
-      this.offset = offset;
+      this.behaviour = behaviour;
+      this.offsetMax = null;
+      this.offsetValue = null;
    }
 
    createProgressBar(content) {
       const progressBar = document.createElement('progress');
       progressBar.classList.add(`progress-bar`);
-      // progressBar.setAttribute("value", 0);
       content.insertBefore(progressBar, content.firstChild)
       return progressBar;
    }
 
-   setProgressMax(progressBar, content, offset) {
-      const maxValue = content.clientHeight - window.innerHeight + offset; //if navbar/header position is static then there isn't offset, when is fixed then offset=navbar/header height (but first section after navbar/header should has margin-top = offset)
+   setProgressMax(progressBar, content, offsetMax) {
+      const maxValue = content.clientHeight - window.innerHeight + offsetMax;
       progressBar.setAttribute("max", maxValue);
    }
 
-   calculateProgress(progressBar, content, nav) {
-      progressBar.setAttribute("value", window.scrollY - content.offsetTop);
-      if (progressBar.value <= 0) {
-         if (window.getComputedStyle(nav).getPropertyValue("position") === "static") progressBar.style.position = "absolute"
-         else if (window.getComputedStyle(nav).getPropertyValue("position") === "fixed") progressBar.style.position = "fixed"
+   calculateProgress(progressBar, content, behaviour = "fixed", offsetValue) {
+      progressBar.setAttribute("value", window.scrollY - content.offsetTop + offsetValue);
+      switch (behaviour) {
+         case "fixed":
+         case 1:
+            progressBar.style.position = "fixed";
+            break;
+         case "sticky":
+         case 0:
+         default:
+            if (progressBar.value <= 0) progressBar.style.position = "absolute";
+            else progressBar.style.position = "fixed";
+            break;
       }
-      else if (progressBar.value > 0 && progressBar.value <= progressBar.max) progressBar.style.position = "fixed";
+   }
+
+   setOffsetValue(offsetValue = null) {
+      this.offsetValue = offsetValue;
+   }
+
+   setOffsetMax(offsetMax = null) {
+      this.offsetMax = offsetMax;
+   }
+
+   setOffset(offsetValue = null, offsetMax = offsetValue) {
+      this.offsetValue = offsetValue;
+      this.offsetMax = offsetMax;
    }
 
    //Throttle - limit the amount of times a function is invoked (mousemove, touchmove, scroll, click(anti-spam button) )
@@ -118,21 +139,21 @@ class ReadingIndicator {
    }
 
    run() {
-      const { content, offset, createProgressBar, setProgressMax, calculateProgress, throttle, debounce } = this;
-      const progressBar = createProgressBar(content);
+      const { content, behaviour, offsetMax, offsetValue, createProgressBar, setProgressMax, calculateProgress, throttle, debounce } = this;
 
-      setProgressMax(progressBar, content, offset);
-      window.addEventListener('scroll', throttle(() => calculateProgress(progressBar, content, navigation), 80));
-      window.addEventListener('scroll', debounce(() => calculateProgress(progressBar, content, navigation), 120));
-      console.log('run');
+      console.log("offsetValue:", offsetValue, "offsetMax:", offsetMax);
+
+      const progressBar = createProgressBar(content);
+      setProgressMax(progressBar, content, offsetMax);
+      window.addEventListener('scroll', throttle(() => calculateProgress(progressBar, content, behaviour, offsetValue), 80));
+      window.addEventListener('scroll', debounce(() => calculateProgress(progressBar, content, behaviour, offsetValue), 120));
    }
 }
 
-const indicator = new ReadingIndicator(article2).run();
+const indicator = new ReadingIndicator(article2, "sticky");
+// indicator.setOffset(0, 60)
+indicator.run();
 
 
 //TO DO:
-// calculateProgress - zamist nav dac parametr isFixed
-// w progressMax - dokonczyc
 // dodac warunek brzegowy - czy pasek w ogole ma sie pojawiac
-// zautomatyzowac, aby nie trzeba bylo wklepywac offsetu ręcznie
