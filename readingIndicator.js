@@ -81,6 +81,7 @@ class ReadingIndicator {
       setProgressMax(progressBar, content, offsetMax);
       window.addEventListener('scroll', throttle(() => calculateProgress(progressBar, content, behaviour, offsetValue), 80));
       window.addEventListener('scroll', debounce(() => calculateProgress(progressBar, content, behaviour, offsetValue), 120));
+      window.addEventListener('resize', debounce(() => setProgressMax(progressBar, content, offsetMax), 800));
    }
 }
 
