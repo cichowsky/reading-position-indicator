@@ -20,7 +20,6 @@ class ReadingIndicator {
    }
 
    calculateProgress(progressBar, content, behaviour = "fixed", offsetValue) {
-      console.log(progressBar.value, progressBar.max);
       if (window.innerHeight <= content.clientHeight + offsetValue) {
          progressBar.setAttribute("value", window.scrollY - content.offsetTop + offsetValue);
          switch (behaviour) {
@@ -40,11 +39,20 @@ class ReadingIndicator {
       }
    }
 
+   //Event Listeners
    setProgressOnScroll = (progressBar, content, behaviour = "fixed", offsetValue) => {
       window.addEventListener('scroll', this.throttle(() => this.calculateProgress(progressBar, content, behaviour, offsetValue), 80));
       window.addEventListener('scroll', this.debounce(() => this.calculateProgress(progressBar, content, behaviour, offsetValue), 120));
    }
 
+   setProgressOnResize = (progressBar, content, behaviour, offsetValue, offsetMax) => {
+      window.addEventListener('resize', this.debounce(() => {
+         this.setProgressMax(progressBar, content, offsetMax);
+         this.calculateProgress(progressBar, content, behaviour, offsetValue)
+      }, 800));
+   };
+
+   //Offset Methods
    setOffsetValue(offsetValue = null) {
       this.offsetValue = offsetValue;
    }
@@ -84,16 +92,12 @@ class ReadingIndicator {
    }
 
    run() {
-      const { content, behaviour, header, offsetMax, offsetValue, createProgressBar, setProgressMax, calculateProgress, setProgressOnScroll, throttle, debounce } = this;
+      const { content, behaviour, header, offsetMax, offsetValue, createProgressBar, setProgressMax, setProgressOnScroll, setProgressOnResize } = this;
 
       const progressBar = createProgressBar(content);
       setProgressMax(progressBar, content, offsetMax);
       setProgressOnScroll(progressBar, content, behaviour, offsetValue);
-
-      window.addEventListener('resize', debounce(() => {
-         setProgressMax(progressBar, content, offsetMax);
-         calculateProgress(progressBar, content, behaviour, offsetValue)
-      }, 800));
+      setProgressOnResize(progressBar, content, behaviour, offsetValue, offsetMax);
    }
 }
 
