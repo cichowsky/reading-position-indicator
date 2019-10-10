@@ -14,25 +14,27 @@ class ReadingIndicator {
    }
 
    setProgressMax(progressBar, content, offsetMax) {
-      console.log("kalkuluje max");
       const maxValue = content.clientHeight - window.innerHeight + offsetMax;
       progressBar.setAttribute("max", maxValue);
    }
 
    calculateProgress(progressBar, content, behaviour = "fixed", offsetValue) {
-      console.log("kalkuluje progress");
-      progressBar.setAttribute("value", window.scrollY - content.offsetTop + offsetValue);
-      switch (behaviour) {
-         case "fixed":
-         case 1:
-            progressBar.style.position = "fixed";
-            break;
-         case "sticky":
-         case 0:
-         default:
-            if (progressBar.value <= 0) progressBar.style.position = "absolute";
-            else progressBar.style.position = "fixed";
-            break;
+      if (window.innerHeight <= content.clientHeight) {
+         progressBar.setAttribute("value", window.scrollY - content.offsetTop + offsetValue);
+         switch (behaviour) {
+            case "fixed":
+            case 1:
+               progressBar.style.position = "fixed";
+               break;
+            case "sticky":
+            case 0:
+            default:
+               if (progressBar.value <= 0) progressBar.style.position = "absolute";
+               else progressBar.style.position = "fixed";
+               break;
+         }
+      } else {
+         progressBar.setAttribute("value", 0);
       }
    }
 
