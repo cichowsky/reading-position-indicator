@@ -1,7 +1,8 @@
 class ReadingIndicator {
-   constructor(content, behaviour = "sticky") {
+   constructor(content, behaviour = "fixed", header = null) {
       this.content = content;
       this.behaviour = behaviour;
+      this.header = header;
       this.offsetMax = null;
       this.offsetValue = null;
    }
@@ -19,7 +20,8 @@ class ReadingIndicator {
    }
 
    calculateProgress(progressBar, content, behaviour = "fixed", offsetValue) {
-      if (window.innerHeight <= content.clientHeight) {
+      console.log(progressBar.value, progressBar.max);
+      if (window.innerHeight <= content.clientHeight + offsetValue) {
          progressBar.setAttribute("value", window.scrollY - content.offsetTop + offsetValue);
          switch (behaviour) {
             case "fixed":
@@ -36,6 +38,11 @@ class ReadingIndicator {
       } else {
          progressBar.setAttribute("value", 0);
       }
+   }
+
+   setProgressOnScroll = (progressBar, content, behaviour = "fixed", offsetValue) => {
+      window.addEventListener('scroll', this.throttle(() => this.calculateProgress(progressBar, content, behaviour, offsetValue), 80));
+      window.addEventListener('scroll', this.debounce(() => this.calculateProgress(progressBar, content, behaviour, offsetValue), 120));
    }
 
    setOffsetValue(offsetValue = null) {
@@ -77,14 +84,12 @@ class ReadingIndicator {
    }
 
    run() {
-      const { content, behaviour, offsetMax, offsetValue, createProgressBar, setProgressMax, calculateProgress, throttle, debounce } = this;
-
-      // console.log("offsetValue:", offsetValue, "offsetMax:", offsetMax);
+      const { content, behaviour, header, offsetMax, offsetValue, createProgressBar, setProgressMax, calculateProgress, setProgressOnScroll, throttle, debounce } = this;
 
       const progressBar = createProgressBar(content);
       setProgressMax(progressBar, content, offsetMax);
-      window.addEventListener('scroll', throttle(() => calculateProgress(progressBar, content, behaviour, offsetValue), 80));
-      window.addEventListener('scroll', debounce(() => calculateProgress(progressBar, content, behaviour, offsetValue), 120));
+      setProgressOnScroll(progressBar, content, behaviour, offsetValue);
+
       window.addEventListener('resize', debounce(() => {
          setProgressMax(progressBar, content, offsetMax);
          calculateProgress(progressBar, content, behaviour, offsetValue)
@@ -95,5 +100,5 @@ class ReadingIndicator {
 export default ReadingIndicator;
 
 //TO DO:
-// dodac warunek brzegowy - czy pasek w ogole ma sie pojawiac
+// podzielic na obsluge z navbarem i bez
 //naprawic sytuacje sticky i navbar fixed
