@@ -1,44 +1,3 @@
-/* PROGRESS */
-progress {
-   position: absolute;
-   top: 0;
-   left: 0;
-   z-index: 10;
-
-   display: block;
-   height: 4px;
-   width: 100%;
-
-   /* Reset the appearance */
-   -webkit-appearance: none;
-   -moz-appearance: none;
-   appearance: none;
-   /* Get rid of the default border in Firefox/Opera. */
-   border: none;
-   /* Progress bar container for Firefox/IE10+ */
-   background-color: transparent;
-   /* Progress bar value for IE10+ */
-   color: green;
-}
-
-progress::-webkit-progress-bar {
-   background-color: transparent;
-}
-
-progress::-webkit-progress-value {
-   background-color: green;
-   transition: 0.3s width linear;
-}
-
-progress::-moz-progress-bar {
-   background-color: green;
-   transition: 0.3s width linear;
-}
-
-
-
-
-/* ------------------------------------------- */
 * {
    box-sizing: border-box;
 }
@@ -49,7 +8,6 @@ body {
    font-family: sans-serif;
    position: relative;
 }
-
 
 nav,
 footer {
@@ -62,15 +20,12 @@ footer {
 }
 
 nav {
-   /* position: fixed; */
-   /* display: none; */
-   background-color: rgba(255, 255, 255, 0.315);
+   position: fixed;
    top: 0;
    left: 0;
    width: 100%;
    z-index: 10;
 }
-
 
 footer {
    min-height: 200px;
