@@ -14,11 +14,13 @@ class ReadingIndicator {
    }
 
    setProgressMax(progressBar, content, offsetMax) {
+      console.log("kalkuluje max");
       const maxValue = content.clientHeight - window.innerHeight + offsetMax;
       progressBar.setAttribute("max", maxValue);
    }
 
    calculateProgress(progressBar, content, behaviour = "fixed", offsetValue) {
+      console.log("kalkuluje progress");
       progressBar.setAttribute("value", window.scrollY - content.offsetTop + offsetValue);
       switch (behaviour) {
          case "fixed":
@@ -75,13 +77,16 @@ class ReadingIndicator {
    run() {
       const { content, behaviour, offsetMax, offsetValue, createProgressBar, setProgressMax, calculateProgress, throttle, debounce } = this;
 
-      console.log("offsetValue:", offsetValue, "offsetMax:", offsetMax);
+      // console.log("offsetValue:", offsetValue, "offsetMax:", offsetMax);
 
       const progressBar = createProgressBar(content);
       setProgressMax(progressBar, content, offsetMax);
       window.addEventListener('scroll', throttle(() => calculateProgress(progressBar, content, behaviour, offsetValue), 80));
       window.addEventListener('scroll', debounce(() => calculateProgress(progressBar, content, behaviour, offsetValue), 120));
-      window.addEventListener('resize', debounce(() => setProgressMax(progressBar, content, offsetMax), 800));
+      window.addEventListener('resize', debounce(() => {
+         setProgressMax(progressBar, content, offsetMax);
+         calculateProgress(progressBar, content, behaviour, offsetValue)
+      }, 800));
    }
 }
 
@@ -89,3 +94,4 @@ export default ReadingIndicator;
 
 //TO DO:
 // dodac warunek brzegowy - czy pasek w ogole ma sie pojawiac
+//naprawic sytuacje sticky i navbar fixed
