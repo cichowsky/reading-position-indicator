@@ -3,7 +3,6 @@ class ReadingIndicator {
       this.content = content;
       this.behaviour = behaviour;
       this.navbar = navbar;
-      this.navbarHeight = getComputedStyle(this.navbar).getPropertyValue("height");
       this.offsetMax = null;
       this.offsetValue = null;
    }
@@ -23,30 +22,29 @@ class ReadingIndicator {
    calculateProgress(progressBar, content, behaviour, offsetValue) {
       if (window.innerHeight <= content.clientHeight + offsetValue) {
          progressBar.setAttribute("value", window.scrollY - content.offsetTop + offsetValue);
-         switch (behaviour) {
-            case "fixed":
-            default:
-               //if navbar is not fixed (none or static or else (given as parameter or not) -> offset 0
-               progressBar.style.position = "fixed";
+
+         if (behaviour === "fixed") {
+            //if navbar is not fixed (none or static or else (given as parameter or not) -> offset 0
+            progressBar.style.position = "fixed";
             //else if navbar is fixed (given as parameter or not) -> add offset, maybe change top property (most results can gain by set offsets or/and top property in css)
-            case "sticky":
-               //if navbar is not fixed (none or static (given as parameter) or else (not given as parameter) ) -> offset 0
-               if (this.navbar === null || getComputedStyle(this.navbar).getPropertyValue("position") === "static") {
-                  if (progressBar.value <= 0) progressBar.style.position = "absolute";
-                  else progressBar.style.position = "fixed";
+         } else if (behaviour === "sticky") {
+            //if navbar is not fixed (none or static (given as parameter) or else (not given as parameter) ) -> offset 0
+            if (this.navbar === null || window.getComputedStyle(this.navbar).getPropertyValue("position") === "static") {
+               if (progressBar.value <= 0) progressBar.style.position = "absolute";
+               else progressBar.style.position = "fixed";
+            }
+            //else if navbar fixed (navbar MUST be given as parameter) 
+            else if (window.getComputedStyle(this.navbar).getPropertyValue("position") === "fixed") {
+               if (progressBar.value <= 0) {
+                  progressBar.style.position = "absolute";
+                  progressBar.style.top = 0;
+               } else {
+                  progressBar.style.position = "fixed";
+                  progressBar.style.top = window.getComputedStyle(this.navbar).getPropertyValue("height");
                }
-               //else if navbar fixed (navbar MUST be given as parameter) 
-               else if (getComputedStyle(this.navbar).getPropertyValue("position") === "fixed") {
-                  if (progressBar.value <= 0) {
-                     progressBar.style.position = "absolute";
-                     progressBar.style.top = 0;
-                  } else {
-                     progressBar.style.position = "fixed";
-                     progressBar.style.top = this.navbarHeight;
-                  }
-               }
-               break;
+            }
          }
+
       } else {
          progressBar.setAttribute("value", 0);
       }
