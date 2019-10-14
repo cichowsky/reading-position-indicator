@@ -66,3 +66,6 @@
 	+ `indicator.setOffset(number1, number2)` - increase or decrease progress value (1) and progress max progress value (2)
 
 + Run indicator - if everything is set, use :  `indicator.run()`
+
+## Examples
+You can find a few examples of using reading indicator in *script.js*.
