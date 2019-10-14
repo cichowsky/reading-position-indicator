@@ -20,7 +20,6 @@ footer {
 }
 
 nav {
-   position: fixed;
    top: 0;
    left: 0;
    width: 100%;
@@ -35,16 +34,14 @@ article {
    position: relative;
    padding: 10px 25px;
    margin: 0 auto;
-   background-color: rgb(110, 110, 110);
-   overflow-y: hidden;
 }
 
 .article1 {
-   /* margin-top: 60px; */
+   background-color: rgb(156, 156, 156);
 }
 
 .article2 {
-   background-color: rgb(153, 151, 122);
+   background-color: rgb(211, 209, 184);
 }
 
 p {
