@@ -19,7 +19,7 @@
 + Link stylesheet to your html (or use sass) :
 	 + link in html:
 		```html
-		<link  rel="stylesheet"  href="path/readingIndicator/readingIndicator.css type="module"">
+		<link  rel="stylesheet"  href="path/readingIndicator/readingIndicator.css" type="module"">
 		```
 
 + Create instance:
